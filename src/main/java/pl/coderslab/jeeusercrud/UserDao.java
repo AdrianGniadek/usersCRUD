@@ -6,7 +6,7 @@ import pl.coderslab.utils.DbUtil;
 import java.sql.*;
 
 
-public class UserDAO {
+public class UserDao {
     private static final String CREATE_USER_QUERY =
             "INSERT INTO users(username, email, password) VALUES (?, ?, ?)";
     private static final String READ_USER_QUERY =
