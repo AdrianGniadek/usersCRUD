@@ -2,11 +2,12 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>JSP - Hello World</title>
+  <title>JSP-Hello World</title>
 </head>
 <body>
-<h1><%= "Hello World!" %></h1>
+<h1><%= "User Application" %>
+</h1>
 <br/>
-<a href="hello-servlet">Hello Servlet</a>
+<a href="/jee_user_crud_war_exploded/user/list">Rozpocznij pracę</a>
 </body>
 </html>
