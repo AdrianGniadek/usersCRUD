@@ -1,6 +1,5 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -22,6 +21,8 @@
   <link href="<c:url value="/theme/css/sb-admin-2.css"/>" rel="stylesheet">
 
 
+
+
 </head>
 
 <body id="page-top">
@@ -37,29 +38,43 @@
     <a href="<c:url value="/user/list"/>" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i class="fas fa-download fa-sm text-white-50"></i> Generate List of Users</a>
   </div>
 
-  <div class="card-header py-3">
-    <h6 class="m-0 font-weight-bold text-primary">Add new User</h6>
+  <!-- Content -->
+  <%--add form to confirm deletion of given user--%>
+  <div class="row">
+    <div class="col-lg-12 mb-4">
+      <div class="card shadow mb-4">
+        <div class="card-header py-3">
+          <h6 class="m-0 font-weight-bold text-primary">User List</h6>
+        </div>
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+              <thead>
+              <tr>
+                <th>ID</th>
+                <th>Username</th>
+                <th>Email</th>
+              </tr>
+              <tr>
+                <td><c:out value="${user.id}"/></td>
+                <td><c:out value="${user.userName}"/></td>
+                <td><c:out value="${user.email}"/></td>
+              </tr>
+              </thead>
+            </table>
+            <form action="<c:url value='/accept/remove?id=${user.id}'/>" method="post">
+              <input type="submit" name="submit" value="Remove" class="btn btn-danger"/>
+              <input type="submit" name="submit" value="Cancel" class="btn btn-secondary"/>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 
-  <%--    make a form to add new user--%>
-  <div class="card-body">
-    <form method="post">
-      <div class="form-group">
-        <label for="userName">Username</label>
-        <input type="text" class="form-control" id="username" name="username" placeholder="Enter username">
-      </div>
-      <div class="form-group">
-        <label for="email">Email address</label>
-        <input type="email" class="form-control" id="email" name="email" placeholder="Enter email">
-      </div>
-      <div class="form-group">
-        <label for="password">Password</label>
-        <input type="password" class="form-control" id="password" name="password" placeholder="Password">
-      </div>
-      <button type="submit" class="btn btn-primary">Submit</button>
-    </form>
-  </div>
+
 </div>
+<!-- /.container-fluid -->
 
 <%@ include file="footer.jsp" %>
 

@@ -1,116 +1,100 @@
 package pl.coderslab.jeeusercrud;
 
-import org.mindrot.jbcrypt.BCrypt;
+import pl.coderslab.jeeusercrud.User;
 import pl.coderslab.utils.DbUtil;
 
-import java.sql.*;
-
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class UserDao {
     private static final String CREATE_USER_QUERY =
             "INSERT INTO users(username, email, password) VALUES (?, ?, ?)";
     private static final String READ_USER_QUERY =
-            "SELECT * FROM users where id = ?";
+            "SELECT * FROM users WHERE id = ?";
     private static final String UPDATE_USER_QUERY =
-            "UPDATE users SET username = ?, email = ?, password = ? where id = ?";
+            "UPDATE users SET username = ?, email = ?, password = ? WHERE id = ?";
     private static final String DELETE_USER_QUERY =
             "DELETE FROM users WHERE id = ?";
     private static final String FIND_ALL_USERS_QUERY =
             "SELECT * FROM users";
 
-    public static void main(String[] args) throws SQLException {
-        Connection conn = DbUtil.connect();
-
-        PreparedStatement preStmt = conn.prepareStatement(CREATE_USER_QUERY, PreparedStatement.RETURN_GENERATED_KEYS);
+    public User create(User user) throws SQLException {
+        PreparedStatement preStmt =
+                DbUtil.connect().prepareStatement(CREATE_USER_QUERY, PreparedStatement.RETURN_GENERATED_KEYS);
+        preStmt.setString(1, user.getUserName());
+        preStmt.setString(2, user.getEmail());
+        preStmt.setString(3, user.getPassword());
+        preStmt.executeUpdate();
         ResultSet rs = preStmt.getGeneratedKeys();
         if (rs.next()) {
-            long id = rs.getLong(1);
-            System.out.println("Inserted ID: " + id);
+            user.setId(rs.getInt(1));
         }
-    }
-    public String hashPassword(String password)
-    {
-        return BCrypt.hashpw(password, BCrypt.gensalt());
-    }
-    public void create(User user) {
-        try (Connection conn = DbUtil.connect()) {
-            PreparedStatement statement =
-                    conn.prepareStatement(CREATE_USER_QUERY, Statement.RETURN_GENERATED_KEYS);
-            statement.setString(1, user.getUserName());
-            statement.setString(2, user.getEmail());
-            statement.setString(3, hashPassword(user.getPassword()));
-            statement.executeUpdate();
+        return user;
 
-            ResultSet resultSet = statement.getGeneratedKeys();
-            if (resultSet.next()) {
-                user.setId(resultSet.getInt(1));
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
     }
+
     public User read(int userId) {
-        try (Connection conn = DbUtil.connect()) {
-            PreparedStatement statement = conn.prepareStatement(READ_USER_QUERY);
-            statement.setInt(1, userId);
-            ResultSet resultSet = statement.executeQuery();
-            if (resultSet.next()) {
+        try (PreparedStatement preStmt = DbUtil.connect().prepareStatement(READ_USER_QUERY)) {
+            preStmt.setInt(1, userId);
+            ResultSet rs = preStmt.executeQuery();
+            if (rs.next()) {
                 User user = new User();
-                user.setId(resultSet.getInt("id"));
-                user.setUserName(resultSet.getString("username"));
-                user.setEmail(resultSet.getString("email"));
-                user.setPassword(resultSet.getString("password"));
+                user.setId(rs.getInt("id"));
+                user.setUserName(rs.getString("username"));
+                user.setEmail(rs.getString("email"));
+                user.setPassword(rs.getString("password"));
                 return user;
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-    public void update(User user) {
-        try (Connection conn = DbUtil.connect()) {
-            PreparedStatement statement = conn.prepareStatement(UPDATE_USER_QUERY);
-            statement.setString(1, user.getUserName());
-            statement.setString(2, user.getEmail());
-            statement.setString(3, this.hashPassword(user.getPassword()));
-            statement.setInt(4, user.getId());
-            statement.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-    private User[] addToArray(User user, User[] users) {
-        User[] newArray = new User[users.length + 1];
-        System.arraycopy(users, 0, newArray, 0, users.length);
-        newArray[users.length] = user;
-        return newArray;
-    }
-    public User[] findAll() {
-        try (Connection conn = DbUtil.connect()) {
-            User[] users = new User[0];
-            PreparedStatement statement = conn.prepareStatement(FIND_ALL_USERS_QUERY);
-            ResultSet resultSet = statement.executeQuery();
-            while (resultSet.next()) {
-                User user = new User();
-                user.setId(resultSet.getInt("id"));
-                user.setUserName(resultSet.getString("username"));
-                user.setEmail(resultSet.getString("email"));
-                user.setPassword(resultSet.getString("password"));
-                users = addToArray(user, users);
-            }
-            return users;
-        } catch (SQLException e) {
+            return null;
+        } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
     }
-    public void delete(int userId) {
-        try (Connection conn = DbUtil.connect()) {
-            PreparedStatement statement = conn.prepareStatement(DELETE_USER_QUERY);
-            statement.setInt(1, userId);
-            statement.executeUpdate();
-        } catch (SQLException e) {
+
+    public void update(User user) {
+        try (PreparedStatement preStmt = DbUtil.connect().prepareStatement(UPDATE_USER_QUERY)) {
+            preStmt.setString(1, user.getUserName());
+            preStmt.setString(2, user.getEmail());
+            preStmt.setString(3, user.getPassword());
+            preStmt.setInt(4, user.getId());
+            preStmt.executeUpdate();
+        } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    public User delete(int userId) {
+        try (PreparedStatement preStmt = DbUtil.connect().prepareStatement(DELETE_USER_QUERY)) {
+            User userToDelete = read(userId);
+            preStmt.setInt(1, userId);
+            preStmt.executeUpdate();
+            return userToDelete;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public List<User> findAll() {
+        try (PreparedStatement preStmt = DbUtil.connect().prepareStatement(FIND_ALL_USERS_QUERY)) {
+            ResultSet rs = preStmt.executeQuery();
+            List<User> users = new ArrayList<>();
+            while (rs.next()) {
+                User user = new User();
+                user.setId(rs.getInt("id"));
+                user.setUserName(rs.getString("username"));
+                user.setEmail(rs.getString("email"));
+                user.setPassword(rs.getString("password"));
+                users.add(user);
+            }
+            return users;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
         }
     }
 }

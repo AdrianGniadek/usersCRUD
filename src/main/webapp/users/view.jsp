@@ -20,7 +20,6 @@
     <!-- Custom styles for this template-->
     <link href="<c:url value="/theme/css/sb-admin-2.css"/>" rel="stylesheet">
 
-
 </head>
 
 <body id="page-top">
@@ -48,29 +47,26 @@
         </tr>
         </thead>
         <tbody>
-        <c:forEach items="${users}" var="user">
-            <tr>
-                <td><c:out value="${user.id}"/></td>
-                <td><c:out value="${user.userName}"/></td>
-                <td><c:out value="${user.email}"/></td>
-                <td>
-                    <div class="row">
-                        <div class="col" style="text-align: center">
-                            <a class="btn btn-primary" href='<c:url value="/user/edit?id=${user.id}"/>'>Edit</a>
-                        </div>
-                        <div class="col" style="text-align: center">
-                            <a class="btn btn-primary" href='<c:url value="/user/delete?id=${user.id}"/>'>Delete</a>
-                        </div>
-                        <div class="col" style="text-align: center">
-                            <a class="btn btn-primary" href='<c:url value="/user/view?id=${user.id}"/>'>View</a>
-                        </div>
+        <tr>
+            <td><c:out value="${user.id}"/></td>
+            <td><c:out value="${user.userName}"/></td>
+            <td><c:out value="${user.email}"/></td>
+            <td>
+                <div class="row">
+                    <div class="col" style="text-align: center">
+                        <a class="btn btn-primary" href='<c:url value="/user/edit?id=${user.id}"/>'>Edit</a>
                     </div>
-                </td>
-            </tr>
-        </c:forEach>
+                    <div class="col" style="text-align: center">
+                        <a class="btn btn-primary" href='<c:url value="/user/delete?id=${user.id}"/>'>Delete</a>
+                    </div>
+                </div>
+            </td>
+        </tr>
         </tbody>
     </table>
+
 </div>
+<!-- /.container-fluid -->
 
 <%@ include file="footer.jsp" %>
 

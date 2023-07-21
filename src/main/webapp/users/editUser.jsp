@@ -1,6 +1,5 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -21,7 +20,6 @@
   <!-- Custom styles for this template-->
   <link href="<c:url value="/theme/css/sb-admin-2.css"/>" rel="stylesheet">
 
-
 </head>
 
 <body id="page-top">
@@ -37,29 +35,43 @@
     <a href="<c:url value="/user/list"/>" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i class="fas fa-download fa-sm text-white-50"></i> Generate List of Users</a>
   </div>
 
-  <div class="card-header py-3">
-    <h6 class="m-0 font-weight-bold text-primary">Add new User</h6>
-  </div>
+  <!-- Content -->
+  <%--          list all users --%>
+  <table class="table table-bordered">
+    <thead>
+    <tr>
+      <th>ID</th>
+      <th>Username</th>
+      <th>Email</th>
+      <th>Password</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+      <td><c:out value="${user.id}" /></td>
+      <td><c:out value="${user.userName}" /></td>
+      <td><c:out value="${user.email}" /></td>
+      <td><c:out value="${user.password}" /></td>
+    </tr>
+    <tr>
+      <td><c:out value="${user.id}" /></td>
 
-  <%--    make a form to add new user--%>
-  <div class="card-body">
-    <form method="post">
-      <div class="form-group">
-        <label for="userName">Username</label>
-        <input type="text" class="form-control" id="username" name="username" placeholder="Enter username">
-      </div>
-      <div class="form-group">
-        <label for="email">Email address</label>
-        <input type="email" class="form-control" id="email" name="email" placeholder="Enter email">
-      </div>
-      <div class="form-group">
-        <label for="password">Password</label>
-        <input type="password" class="form-control" id="password" name="password" placeholder="Password">
-      </div>
-      <button type="submit" class="btn btn-primary">Submit</button>
-    </form>
-  </div>
+      <form action="<c:url value='/user/edit' />" method="get">
+        <input type="hidden" name="id" value="<c:out value='${user.id}' />" />
+        <td><input type="text" name="userName" value="<c:out value='${user.userName}' />" class="form-control" /></td>
+        <td><input type="text" name="email" value="<c:out value='${user.email}' />" class="form-control" /></td>
+        <td><input type="text" name="password" value="<c:out value='${user.password}' />" class="form-control" /></td>
+        <td><input type="submit" name="submit" value="Edit" class="btn btn-primary" /></td>
+      </form>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+
+
+
 </div>
+<!-- /.container-fluid -->
 
 <%@ include file="footer.jsp" %>
 
